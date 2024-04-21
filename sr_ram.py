@@ -1,6 +1,7 @@
 import ctypes
 from ctypes import wintypes
 import pymem
+import struct
 
 #SONIC R
 #(https://info.sonicretro.org/Sonic_R/Technical_information/Windows_PC)
@@ -210,24 +211,35 @@ form = {
         "p5Data":plrStruct} 
 
 #8 bytes (2 bytes * 4 players)
-"""3 - LBrake
-6 - Camera
-7 - RBrake
-8 - Spindash/Accelerate
-A - Jump
-B - Start
-C - Up
-D - Down
-E - Left
-F - Right"""
+controlBitfield = {
+    'LBrake' : 0x3,
+    'Camera' : 0x6,
+    'RBrake' : 0x7,
+    'Accel' : 0x8,
+    'Jump' : 0xA,
+    'Start' : 0xB,
+    'Up' : 0xC,
+    'Down' : 0xD,
+    'Left' : 0xE,
+    'Right' : 0xF
+}
 
 def setType(typ,val):
     if typ == 'b':
-        return ctypes.wintypes.BYTE(val)
+        if val == None:
+            return ctypes.wintypes.BYTE()
+        else:
+            return ctypes.wintypes.BYTE(val)
     elif typ == 'w':
-        return ctypes.wintypes.WORD(val)
+        if val == None:
+            return ctypes.wintypes.WORD()
+        else:
+            return ctypes.wintypes.WORD(val)
     elif typ == 'dw':
-        return ctypes.wintypes.DWORD(val)
+        if val == None:
+            return ctypes.wintypes.DWORD()
+        else:
+            return ctypes.wintypes.DWORD(val)
     else:
         print(f"Failed to asign {val} as {typ}")
         return -1
@@ -251,3 +263,29 @@ def read(name,off,pv):
         v = setType(form[name],None)
     if v!=-1:
         return process.read_ctype(address=add,ctype=v,get_py_value=pv)
+
+def btst(num, bit, debug=False):
+    bits = f"{bin(num.value)[2:]}"
+    for i in range(16-len(bits)):
+        bits = f'0{bits}'
+    if debug:
+        print(bits)
+        for i in range(16):
+            if int(15-bit) == i:
+                print('=',end='')
+            else:
+                print('_',end='')
+    return bits[int(15-bit)] == '1'
+
+def plrInputTest(player,move,debug=False):
+    if str(type(move)) == "<class 'str'>":
+        if move != "Foward":
+            bit = controlBitfield[move]
+    else:
+        bit = move
+    
+    num = read(f"controlBitfieldP{player}",0,False)
+    if move != "Foward":
+        return btst(num,bit,debug)
+    else:
+        return (btst(num,controlBitfield['Accel'],debug) or btst(num,controlBitfield['Up'],debug))
