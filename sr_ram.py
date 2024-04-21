@@ -51,7 +51,7 @@ pSlopeMagnitude = 0xB6
 pSlopeRZ = 0xB8
 pLoop = 0xBC #?
 pLoopXZPos = 0xC0
-pLoopXZDist = 0xC4
+pLoopDist = 0xC4
 pLoop2 = 0xC8 #?
 pLoopXZMom = 0xCC
 pLoopMom = 0xD0 #mom is momentum btw
@@ -110,7 +110,7 @@ plrStruct = {
     pSlopeRZ : 'w',
     pLoop : 'dw',
     pLoopXZPos : 'dw',
-    pLoopXZDist : 'dw',
+    pLoopDist : 'dw',
     pLoop2 : 'dw',
     pLoopXZMom : 'dw',
     pLoopMom : 'dw',
