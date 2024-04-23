@@ -1,7 +1,6 @@
 import ctypes
 from ctypes import wintypes
 import pymem
-import struct
 
 #SONIC R
 #(https://info.sonicretro.org/Sonic_R/Technical_information/Windows_PC)
@@ -276,6 +275,14 @@ def btst(num, bit, debug=False):
             else:
                 print('_',end='')
     return bits[int(15-bit)] == '1'
+
+def bitfield(name):
+    num = read(name,0,False)
+    bits = f"{bin(num.value)[2:]}"
+    for i in range(16-len(bits)):
+        bits = f'0{bits}'
+    bits = bits[::-1]
+    return bits
 
 def plrInputTest(player,move,debug=False):
     if str(type(move)) == "<class 'str'>":
