@@ -10,20 +10,24 @@ class Text:
         self.font=font
         self.size=self.font.size('A')[1]
         self.color=color
-        self.pos = pos
-        if pos=None:
-            self.pos = []
-            for i in range(len(txt)):
-                self.pos.append([0,self.size*i])
+        if pos!=None:
+            self.pos = pos
+        else:
+            self.pos = [None for _ in range(len(text))]
+            for i in range(len(self.text)):
+                self.pos[i] = [0,self.size*i]
         self.rendered=[None for _ in range(len(text))]
+        
         for i in range(len(text)):
             self.render(i)
+        print(self.rendered)
     def render(self,index):
         self.rendered[index] = self.font.render(self.text[index],False,self.color)
     def update(self,index,val=None,pos=None):
-        self.text[index] = val
-        self.pos[index] = pos
+        if pos != None:
+            self.pos[index] = pos
         if val != None:
+            self.text[index] = val
             self.render(index)
     def display(self,surf):
         for i in range(len(self.rendered)):
